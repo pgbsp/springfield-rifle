@@ -1,790 +1,573 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Springfield Model 1861 Maintenance Simulator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --parchment: #F4EBD7;
+      --earth-brown: #5A4328;
+      --earth-brown-dark: #3A2C1D;
+      --sage: #6E8363;
+      --sage-light: #AAB79E;
+      --historic-red: #8C3B32;
+      --ink: #2B241C;
+      --border: #B9A788;
+      --shadow: 0 2px 10px rgba(0, 0, 0, .12);
+      --font-heading: 'Libre Baskerville', serif;
+      --font-body: 'Source Sans 3', sans-serif;
+    }
 
-<title>Springfield Model 1861 Maintenance Simulator</title>
+    * { box-sizing: border-box; }
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+    body {
+      margin: 0;
+      background: var(--parchment);
+      color: var(--ink);
+      font-family: var(--font-body);
+      line-height: 1.7;
+    }
 
-<style>
+    header {
+      background: var(--earth-brown);
+      color: white;
+      text-align: center;
+      padding: 24px;
+      border-bottom: 6px solid var(--historic-red);
+    }
 
-:root{
-  --parchment:#F4EBD7;
-  --prairie-tan:#D7C4A1;
+    header h1 {
+      margin: 0;
+      font-family: var(--font-heading);
+      font-size: 2rem;
+    }
 
-  --earth-brown:#5A4328;
-  --earth-brown-dark:#3A2C1D;
+    header p { margin: 10px 0 0; }
 
-  --sage:#6E8363;
-  --sage-light:#AAB79E;
+    .site-banner {
+      background: var(--sage);
+      color: white;
+      text-align: center;
+      padding: 10px;
+      letter-spacing: .08em;
+      font-size: .95rem;
+    }
 
-  --historic-red:#8C3B32;
+    #phase {
+      background: white;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+      font-family: var(--font-heading);
+      font-size: 1.35rem;
+      padding: 15px;
+    }
 
-  --ink:#2B241C;
-  --border:#B9A788;
-  --shadow:0 2px 10px rgba(0,0,0,.12);
+    .container {
+      max-width: 1300px;
+      margin: auto;
+      padding: 24px;
+    }
 
-  --font-heading:'Libre Baskerville', serif;
-  --font-body:'Source Sans 3', sans-serif;
-}
+    .intro-panel {
+      background: white;
+      border-left: 8px solid var(--historic-red);
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+    }
 
-*{
-  box-sizing:border-box;
-}
+    .intro-panel h2 {
+      font-family: var(--font-heading);
+      margin-top: 0;
+      color: var(--earth-brown);
+    }
 
-body{
-  margin:0;
-  background:var(--parchment);
-  color:var(--ink);
-  font-family:var(--font-body);
-  line-height:1.7;
-}
+    #message {
+      background: white;
+      padding: 16px;
+      margin-bottom: 24px;
+      border-left: 6px solid var(--sage);
+      box-shadow: var(--shadow);
+    }
 
-header{
-  background:var(--earth-brown);
-  color:white;
-  text-align:center;
-  padding:24px;
-  border-bottom:6px solid var(--historic-red);
-}
+    .phase-card {
+      background: white;
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
 
-header h1{
-  margin:0;
-  font-family:var(--font-heading);
-  font-size:2rem;
-}
+    .content-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 300px;
+      gap: 24px;
+    }
 
-header p{
-  margin-top:10px;
-}
+    .artifact-card {
+      background: #fffdf7;
+      border: 1px solid var(--border);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
 
-.site-banner{
-  background:var(--sage);
-  color:white;
-  text-align:center;
-  padding:10px;
-  letter-spacing:.08em;
-  font-size:.95rem;
-}
+    .artifact-card h3 {
+      margin-top: 0;
+      font-family: var(--font-heading);
+      color: var(--earth-brown);
+    }
 
-#phase{
-  background:white;
-  border-bottom:1px solid var(--border);
-  text-align:center;
-  font-family:var(--font-heading);
-  font-size:1.35rem;
-  padding:15px;
-}
+    h2 { color: var(--earth-brown); font-family: var(--font-heading); }
 
-.container{
-  max-width:1300px;
-  margin:auto;
-  padding:24px;
-}
+    .historic-note {
+      color: #625b53;
+      font-style: italic;
+      max-width: 800px;
+    }
 
-.intro-panel{
-  background:white;
-  border-left:8px solid var(--historic-red);
-  padding:24px;
-  margin-bottom:24px;
-  box-shadow:var(--shadow);
-}
+    .hidden { display: none !important; }
 
-.intro-panel h2{
-  font-family:var(--font-heading);
-  margin-top:0;
-  color:var(--earth-brown);
-}
+    #musket, #assembly-musket {
+      position: relative;
+      width: min(100%, 1000px);
+      height: 260px;
+      margin: auto;
+    }
 
-#message{
-  background:white;
-  padding:16px;
-  margin-bottom:24px;
-  border-left:6px solid var(--sage);
-  box-shadow:var(--shadow);
-}
+    .part, .drop-target { position: absolute; }
 
-.phase-card{
-  background:white;
-  box-shadow:var(--shadow);
-  padding:20px;
-}
+    .part {
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+    }
 
-.content-grid{
-  display:grid;
-  grid-template-columns:1fr 300px;
-  gap:24px;
-}
+    .part:active { cursor: grabbing; }
 
-.artifact-card{
-  background:#fffdf7;
-  border:1px solid var(--border);
-  padding:20px;
-  box-shadow:var(--shadow);
-}
+    .stock {
+      left: 0;
+      top: 100px;
+      width: 34%;
+      height: 70px;
+      border-radius: 15px 60px 15px 40px;
+      background: #7b4b28;
+    }
 
-.artifact-card h3{
-  margin-top:0;
-  font-family:var(--font-heading);
-  color:var(--earth-brown);
-}
+    .barrel {
+      left: 30%;
+      top: 126px;
+      width: 55%;
+      height: 16px;
+      background: #888;
+    }
 
-h2{
-  color:var(--earth-brown);
-  font-family:var(--font-heading);
-}
+    .ramrod {
+      left: 32%;
+      top: 150px;
+      width: 50%;
+      height: 6px;
+      background: #444;
+    }
 
-.historic-note{
-  color:#625b53;
-  font-style:italic;
-  max-width:800px;
-}
+    .lockplate {
+      left: 22%;
+      top: 85px;
+      width: 9%;
+      height: 50px;
+      border-radius: 10px;
+      background: #777;
+    }
 
-.hidden{
-  display:none !important;
-}
+    .trigger {
+      left: 22%;
+      top: 145px;
+      width: 7%;
+      height: 60px;
+      border-radius: 8px;
+      background: #555;
+    }
 
-#musket,
-#assembly-musket{
-  position:relative;
-  width:min(100%,1000px);
-  height:260px;
-  margin:auto;
-}
+    #parts-bin {
+      margin-top: 20px;
+      padding: 20px;
+      background: white;
+      border-radius: 10px;
+      border: 3px dashed var(--earth-brown);
+      text-align: center;
+    }
 
-.part,
-.drop-target{
-  position:absolute;
-}
+    .bin-label { font-weight: 700; }
 
-.part{
-  cursor:grab;
-  touch-action:none;
-  user-select:none;
-}
+    #cleaning-area, #inspection-area {
+      position: relative;
+      min-height: 420px;
+      overflow: hidden;
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      background:
+        linear-gradient(rgba(255, 255, 255, .1), rgba(255, 255, 255, .1)),
+        repeating-linear-gradient(90deg, #9b734d, #9b734d 16px, #8a6744 16px, #8a6744 32px);
+    }
 
-.stock{
-  left:0;
-  top:100px;
-  width:34%;
-  height:70px;
-  border-radius:15px 60px 15px 40px;
-  background:#7b4b28;
-}
+    .cleaning-musket, .inspection-musket {
+      position: absolute;
+      left: 5%;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 90%;
+      height: 25px;
+      background: #777;
+    }
 
-.barrel{
-  left:30%;
-  top:126px;
-  width:55%;
-  height:16px;
-  background:#888;
-}
+    .rust {
+      position: absolute;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #7A3F10;
+      border: 2px solid rgba(0, 0, 0, .2);
+      cursor: pointer;
+    }
 
-.ramrod{
-  left:32%;
-  top:150px;
-  width:50%;
-  height:6px;
-  background:#444;
-}
+    .defect {
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--historic-red);
+      border: 2px solid white;
+      cursor: pointer;
+    }
 
-.lockplate{
-  left:22%;
-  top:85px;
-  width:9%;
-  height:50px;
-  border-radius:10px;
-  background:#777;
-}
+    .defect.found { background: var(--sage); }
 
-.trigger{
-  left:22%;
-  top:145px;
-  width:7%;
-  height:60px;
-  border-radius:8px;
-  background:#555;
-}
+    .assembly-tray {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 20px;
+    }
 
-#parts-bin{
-  margin-top:20px;
-  padding:20px;
-  background:white;
-  border-radius:10px;
-  border:3px dashed var(--earth-brown);
-  text-align:center;
-}
+    .assembly-card {
+      min-width: 150px;
+      padding: 14px;
+      text-align: center;
+      background: white;
+      border: 2px solid var(--earth-brown);
+      border-radius: 8px;
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+    }
 
-.bin-label{
-  font-weight:700;
-}
+    .drop-target {
+      opacity: .25;
+      outline: 2px dashed var(--earth-brown);
+    }
 
-#cleaning-area,
-#inspection-area{
-  position:relative;
-  min-height:420px;
-  overflow:hidden;
-  border-radius:10px;
-  box-shadow:var(--shadow);
+    .drop-target.placed {
+      opacity: .9;
+      background: var(--sage-light);
+      outline: none;
+    }
 
-  background:
-  linear-gradient(
-    rgba(255,255,255,.1),
-    rgba(255,255,255,.1)
-  ),
-  repeating-linear-gradient(
-    90deg,
-    #9b734d,
-    #9b734d 16px,
-    #8a6744 16px,
-    #8a6744 32px
-  );
-}
+    button {
+      background: var(--earth-brown);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 12px 22px;
+      font-family: var(--font-body);
+      cursor: pointer;
+    }
 
-.cleaning-musket,
-.inspection-musket{
-  position:absolute;
-  left:5%;
-  top:50%;
-  transform:translateY(-50%);
-  width:90%;
-  height:25px;
-  background:#777;
-}
+    button:hover { background: var(--earth-brown-dark); }
 
-.rust{
-  position:absolute;
-  width:44px;
-  height:44px;
-  border-radius:50%;
-  background:#7A3F10;
-  border:2px solid rgba(0,0,0,.2);
-  cursor:pointer;
-}
+    blockquote {
+      font-family: var(--font-heading);
+      font-style: italic;
+      color: var(--earth-brown);
+      max-width: 700px;
+      margin: 24px auto;
+    }
 
-.defect{
-  position:absolute;
-  width:28px;
-  height:28px;
-  border-radius:50%;
-  background:var(--historic-red);
-  border:2px solid white;
-  cursor:pointer;
-}
+    #complete {
+      background: white;
+      border-top: 8px solid var(--sage);
+      box-shadow: var(--shadow);
+      padding: 40px;
+      text-align: center;
+    }
 
-.defect.found{
-  background:var(--sage);
-}
+    .back-link { margin-top: 12px; }
 
-.assembly-tray{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  justify-content:center;
-  margin-top:20px;
-}
+    @media (max-width: 900px) {
+      .content-grid { grid-template-columns: 1fr; }
+    }
 
-.assembly-card{
-  min-width:150px;
-  padding:14px;
-  text-align:center;
-  background:white;
-  border:2px solid var(--earth-brown);
-  border-radius:8px;
-}
-
-.drop-target{
-  opacity:.25;
-  outline:2px dashed var(--earth-brown);
-}
-
-.drop-target.placed{
-  opacity:.9;
-  background:var(--sage-light);
-  outline:none;
-}
-
-button{
-  background:var(--earth-brown);
-  color:white;
-  border:none;
-  border-radius:6px;
-  padding:12px 22px;
-  font-family:var(--font-body);
-  cursor:pointer;
-}
-
-button:hover{
-  background:var(--earth-brown-dark);
-}
-
-blockquote{
-  font-family:var(--font-heading);
-  font-style:italic;
-  color:var(--earth-brown);
-  max-width:700px;
-  margin:24px auto;
-}
-
-#complete{
-  background:white;
-  border-top:8px solid var(--sage);
-  box-shadow:var(--shadow);
-  padding:40px;
-  text-align:center;
-}
-
-@media(max-width:900px){
-
-  .content-grid{
-    grid-template-columns:1fr;
-  }
-
-}
-
-@media(max-width:600px){
-
-  .container{
-    padding:12px;
-  }
-
-  #musket,
-  #assembly-musket{
-    height:220px;
-  }
-
-}
-
-</style>
+    @media (max-width: 600px) {
+      .container { padding: 12px; }
+      #musket, #assembly-musket { height: 220px; }
+      header h1 { font-size: 1.5rem; }
+    }
+  </style>
 </head>
-
 <body>
-
-<header>
-<h1>Springfield Model 1861 Maintenance Simulator</h1>
-<p>Prairie Grove Battlefield Interpretive Experience</p>
-</header>
-
-<div class="site-banner">
-Battle of Prairie Grove • December 7, 1862
-</div>
-
-<div id="phase">
-Disassembly
-</div>
-
-<div class="container">
-
-<div class="intro-panel">
-<h2>Preparing for Battle</h2>
-
-<p>
-On the eve of the Battle of Prairie Grove, soldiers depended on well-maintained
-Springfield Model 1861 rifled muskets. A neglected weapon could misfire, lose
-accuracy, or fail when it was needed most.
-</p>
-
-<p>
-As company armorer, your task is to disassemble, clean, inspect, and
-reassemble this musket before it is returned to service.
-</p>
-</div>
-
-<div id="message">
-Drag each component from the musket into the parts bin.
-</div>
-
-<div class="content-grid">
-
-<div>
-
-<!-- DISASSEMBLY -->
-
-<section id="disassembly" class="phase-card">
-
-<div id="musket">
-
-<div class="part stock" data-part="stock"></div>
-<div class="part barrel" data-part="barrel"></div>
-<div class="part ramrod" data-part="ramrod"></div>
-<div class="part lockplate" data-part="lockplate"></div>
-<div class="part trigger" data-part="trigger"></div>
-
-</div>
-
-<div id="parts-bin">
-<div class="bin-label">
-Parts Bin • Drag Components Here
-</div>
-</div>
-
-</section>
-
-<!-- CLEANING -->
-
-<section id="cleaning" class="phase-card hidden">
-
-<h2>Cleaning the Musket</h2>
-
-<p class="historic-note">
-Black powder left heavy fouling inside a rifle barrel.
-Regular cleaning helped maintain reliability and accuracy.
-</p>
-
-<div id="cleaning-area">
-<div class="cleaning-musket"></div>
-</div>
-
-</section>
-
-<!-- INSPECTION -->
-
-<section id="inspection" class="phase-card hidden">
-
-<h2>Inspection of Components</h2>
-
-<p class="historic-note">
-Armorers looked for corrosion, cracks, loose hardware,
-and other defects before returning a weapon to service.
-</p>
-
-<div id="inspection-area">
-<div class="inspection-musket"></div>
-</div>
-
-</section>
-
-<!-- ASSEMBLY -->
-
-<section id="assembly" class="phase-card hidden">
-
-<h2>Reassembling the Springfield</h2>
-
-<p class="historic-note">
-Once cleaned and inspected, the musket had to be properly
-reassembled before issuance to the regiment.
-</p>
-
-<div id="assembly-musket">
-
-<div class="drop-target stock" data-part="stock"></div>
-<div class="drop-target barrel" data-part="barrel"></div>
-<div class="drop-target ramrod" data-part="ramrod"></div>
-<div class="drop-target lockplate" data-part="lockplate"></div>
-<div class="drop-target trigger" data-part="trigger"></div>
-
-</div>
-
-<div id="assembly-tray" class="assembly-tray"></div>
-
-</section>
-
-<!-- COMPLETE -->
-
-<section id="complete" class="hidden">
-
-<h2>Ready for Service</h2>
-
-<blockquote>
-“A clean weapon was essential to every soldier serving
-on the prairie ridges of northwest Arkansas.”
-</blockquote>
-
-<p>
-The musket has passed inspection and is ready for issue
-to the regiment.
-</p>
-
-<button onclick="location.reload()">
-Prepare Another Musket
-</button>
-
-</section>
-
-</div>
-
-<aside class="artifact-card">
-
-<h3>Springfield Model 1861</h3>
-
-<ul>
-<li>Caliber: .58</li>
-<li>Weight: 9.2 pounds</li>
-<li>Barrel Length: 40 inches</li>
-<li>Action: Percussion lock</li>
-<li>Effective Range: 200–300 yards</li>
-</ul>
-
-<p>
-The Springfield Model 1861 became one of the most common
-infantry weapons used during the American Civil War.
-</p>
-
-</aside>
-
-</div>
-
-</div>
-
-<script>
-
-const phase=document.getElementById('phase');
-const message=document.getElementById('message');
-
-const partNames={
- stock:'Stock',
- barrel:'Barrel',
- ramrod:'Ramrod',
- lockplate:'Lock Plate',
- trigger:'Trigger Assembly'
-};
-
-let removedParts=0;
-let foundDefects=0;
-let assembledParts=0;
-
-function overlaps(a,b){
-
- const r1=a.getBoundingClientRect();
- const r2=b.getBoundingClientRect();
-
- return (
-  r1.left<r2.right &&
-  r1.right>r2.left &&
-  r1.top<r2.bottom &&
-  r1.bottom>r2.top
- );
-}
-
-function makeDraggable(item,onDrop){
-
- item.addEventListener('pointerdown',e=>{
-
-  e.preventDefault();
-
-  const rect=item.getBoundingClientRect();
-
-  const offsetX=e.clientX-rect.left;
-  const offsetY=e.clientY-rect.top;
-
-  item.style.position='fixed';
-  item.style.left=rect.left+'px';
-  item.style.top=rect.top+'px';
-  item.style.width=rect.width+'px';
-  item.style.height=rect.height+'px';
-  item.style.zIndex='1000';
-
-  function move(ev){
-
-   item.style.left=(ev.clientX-offsetX)+'px';
-   item.style.top=(ev.clientY-offsetY)+'px';
-
-  }
-
-  function up(ev){
-
-   document.removeEventListener('pointermove',move);
-
-   if(onDrop(item,ev.clientX,ev.clientY))
-      return;
-
-   item.removeAttribute('style');
-  }
-
-  document.addEventListener('pointermove',move);
-  document.addEventListener('pointerup',up,{once:true});
-
- });
-
-}
-
-/* DISASSEMBLY */
-
-document.querySelectorAll('#musket .part')
-.forEach(part=>{
-
- makeDraggable(part,(item)=>{
-
-   const bin=document.getElementById('parts-bin');
-
-   if(!overlaps(item,bin))
-      return false;
-
-   item.remove();
-
-   removedParts++;
-
-   if(removedParts===5)
-      beginCleaning();
-
-   return true;
-
- });
-
-});
-
-function show(id){
-
- ['disassembly','cleaning','inspection','assembly','complete']
- .forEach(x=>{
-   document.getElementById(x)
-   .classList.toggle('hidden',x!==id);
- });
-
-}
-
-function beginCleaning(){
-
- show('cleaning');
-
- phase.textContent='Cleaning';
-
- message.textContent=
- 'Remove all traces of rust and fouling from the musket.';
-
- const area=document.getElementById('cleaning-area');
-
- let remaining=8;
-
- for(let i=0;i<8;i++){
-
-   const rust=document.createElement('div');
-
-   rust.className='rust';
-
-   rust.style.left=(5+Math.random()*85)+'%';
-   rust.style.top=(10+Math.random()*70)+'%';
-
-   rust.onclick=()=>{
-
-     rust.remove();
-     remaining--;
-
-     if(!remaining)
-       beginInspection();
-
-   };
-
-   area.appendChild(rust);
-
- }
-
-}
-
-function beginInspection(){
-
- show('inspection');
-
- phase.textContent='Inspection';
-
- message.textContent=
- 'Locate and identify all visible defects.';
-
- const area=document.getElementById('inspection-area');
-
- for(let i=0;i<4;i++){
-
-   const defect=document.createElement('div');
-
-   defect.className='defect';
-
-   defect.style.left=(10+Math.random()*80)+'%';
-   defect.style.top=(15+Math.random()*60)+'%';
-
-   defect.onclick=()=>{
-
-      if(defect.classList.contains('found'))
-         return;
-
-      defect.classList.add('found');
-
-      foundDefects++;
-
-      if(foundDefects===4)
-         beginAssembly();
-
-   };
-
-   area.appendChild(defect);
- }
-
-}
-
-function beginAssembly(){
-
- show('assembly');
-
- phase.textContent='Reassembly';
-
- message.textContent=
- 'Return each component to its proper location.';
-
- const tray=document.getElementById('assembly-tray');
-
- Object.entries(partNames)
- .forEach(([part,name])=>{
-
-   const card=document.createElement('div');
-
-   card.className='assembly-card';
-   card.dataset.part=part;
-   card.textContent=name;
-
-   makeDraggable(card,(item,x,y)=>{
-
-     const target=[...document.querySelectorAll('.drop-target:not(.placed)')]
-     .find(t=>{
-
-       const r=t.getBoundingClientRect();
-
-       return (
-         t.dataset.part===item.dataset.part &&
-         x>=r.left &&
-         x<=r.right &&
-         y>=r.top &&
-         y<=r.bottom
-       );
-
-     });
-
-     if(!target)
-        return false;
-
-     target.classList.add('placed');
-
-     item.remove();
-
-     assembledParts++;
-
-     if(assembledParts===5)
-        finish();
-
-     return true;
-
-   });
-
-   tray.appendChild(card);
-
- });
-
-}
-
-function finish(){
-
- show('complete');
-
- phase.textContent='Ready for Service';
-
- message.textContent=
- 'The Springfield Model 1861 has passed inspection.';
-
-}
-
-</script>
-
+  <header>
+    <h1>Springfield Model 1861 Maintenance Simulator</h1>
+    <p>Prairie Grove Battlefield Interpretive Experience</p>
+  </header>
+
+  <div class="site-banner">Battle of Prairie Grove • December 7, 1862</div>
+  <div id="phase">Disassembly</div>
+
+  <main class="container">
+    <section class="intro-panel">
+      <h2>Preparing for Battle</h2>
+      <p>On the eve of the Battle of Prairie Grove, soldiers depended on well-maintained Springfield Model 1861 rifled muskets. A neglected weapon could misfire, lose accuracy, or fail when it was needed most.</p>
+      <p>As company armorer, your task is to disassemble, clean, inspect, and reassemble this musket before it is returned to service.</p>
+    </section>
+
+    <div id="message" aria-live="polite">Drag each component from the musket into the parts bin.</div>
+
+    <div class="content-grid">
+      <div>
+        <section id="disassembly" class="phase-card">
+          <div id="musket" aria-label="Musket components">
+            <div class="part stock" data-part="stock" aria-label="Stock"></div>
+            <div class="part barrel" data-part="barrel" aria-label="Barrel"></div>
+            <div class="part ramrod" data-part="ramrod" aria-label="Ramrod"></div>
+            <div class="part lockplate" data-part="lockplate" aria-label="Lock plate"></div>
+            <div class="part trigger" data-part="trigger" aria-label="Trigger assembly"></div>
+          </div>
+          <div id="parts-bin"><div class="bin-label">Parts Bin • Drag Components Here</div></div>
+        </section>
+
+        <section id="cleaning" class="phase-card hidden">
+          <h2>Cleaning the Musket</h2>
+          <p class="historic-note">Black powder left heavy fouling inside a rifle barrel. Regular cleaning helped maintain reliability and accuracy.</p>
+          <div id="cleaning-area"><div class="cleaning-musket"></div></div>
+        </section>
+
+        <section id="inspection" class="phase-card hidden">
+          <h2>Inspection of Components</h2>
+          <p class="historic-note">Armorers looked for corrosion, cracks, loose hardware, and other defects before returning a weapon to service.</p>
+          <div id="inspection-area"><div class="inspection-musket"></div></div>
+        </section>
+
+        <section id="assembly" class="phase-card hidden">
+          <h2>Reassembling the Springfield</h2>
+          <p class="historic-note">Once cleaned and inspected, the musket had to be properly reassembled before issuance to the regiment.</p>
+          <div id="assembly-musket">
+            <div class="drop-target stock" data-part="stock"></div>
+            <div class="drop-target barrel" data-part="barrel"></div>
+            <div class="drop-target ramrod" data-part="ramrod"></div>
+            <div class="drop-target lockplate" data-part="lockplate"></div>
+            <div class="drop-target trigger" data-part="trigger"></div>
+          </div>
+          <div id="assembly-tray" class="assembly-tray"></div>
+        </section>
+
+        <section id="complete" class="hidden">
+          <h2>Ready for Service</h2>
+          <blockquote>“A clean weapon was essential to every soldier serving on the prairie ridges of northwest Arkansas.”</blockquote>
+          <p>The musket has passed inspection and is ready for issue to the regiment.</p>
+          <button type="button" onclick="location.reload()">Prepare Another Musket</button>
+        </section>
+      </div>
+
+      <aside class="artifact-card">
+        <h3>Springfield Model 1861</h3>
+        <ul>
+          <li>Caliber: .58</li>
+          <li>Weight: 9.2 pounds</li>
+          <li>Barrel Length: 40 inches</li>
+          <li>Action: Percussion lock</li>
+          <li>Effective Range: 200–300 yards</li>
+        </ul>
+        <p>The Springfield Model 1861 became one of the most common infantry weapons used during the American Civil War.</p>
+      </aside>
+    </div>
+
+    <button class="back-link" type="button" onclick="window.location.href='https://pgbsp.github.io/follow-a-soldier/'">Back to Story</button>
+  </main>
+
+  <script>
+    const phase = document.getElementById('phase');
+    const message = document.getElementById('message');
+    const partNames = {
+      stock: 'Stock',
+      barrel: 'Barrel',
+      ramrod: 'Ramrod',
+      lockplate: 'Lock Plate',
+      trigger: 'Trigger Assembly'
+    };
+
+    let removedParts = 0;
+    let foundDefects = 0;
+    let assembledParts = 0;
+
+    function overlaps(a, b) {
+      const r1 = a.getBoundingClientRect();
+      const r2 = b.getBoundingClientRect();
+      return r1.left < r2.right && r1.right > r2.left &&
+        r1.top < r2.bottom && r1.bottom > r2.top;
+    }
+
+    function makeDraggable(item, onDrop) {
+      item.addEventListener('pointerdown', event => {
+        if (event.button !== undefined && event.button !== 0) return;
+        event.preventDefault();
+
+        const rect = item.getBoundingClientRect();
+        const offsetX = event.clientX - rect.left;
+        const offsetY = event.clientY - rect.top;
+
+        item.style.position = 'fixed';
+        item.style.left = `${rect.left}px`;
+        item.style.top = `${rect.top}px`;
+        item.style.width = `${rect.width}px`;
+        item.style.height = `${rect.height}px`;
+        item.style.zIndex = '1000';
+
+        function move(moveEvent) {
+          item.style.left = `${moveEvent.clientX - offsetX}px`;
+          item.style.top = `${moveEvent.clientY - offsetY}px`;
+        }
+
+        function cleanup() {
+          document.removeEventListener('pointermove', move);
+          document.removeEventListener('pointerup', up);
+          document.removeEventListener('pointercancel', cancel);
+        }
+
+        function reset() {
+          cleanup();
+          if (item.isConnected) item.removeAttribute('style');
+        }
+
+        function up(upEvent) {
+          cleanup();
+          if (!onDrop(item, upEvent.clientX, upEvent.clientY) && item.isConnected) {
+            item.removeAttribute('style');
+          }
+        }
+
+        function cancel() {
+          reset();
+        }
+
+        document.addEventListener('pointermove', move);
+        document.addEventListener('pointerup', up);
+        document.addEventListener('pointercancel', cancel);
+      });
+    }
+
+    document.querySelectorAll('#musket .part').forEach(part => {
+      makeDraggable(part, item => {
+        const bin = document.getElementById('parts-bin');
+        if (!overlaps(item, bin)) return false;
+
+        item.remove();
+        removedParts++;
+        if (removedParts === Object.keys(partNames).length) beginCleaning();
+        return true;
+      });
+    });
+
+    function show(id) {
+      ['disassembly', 'cleaning', 'inspection', 'assembly', 'complete'].forEach(section => {
+        document.getElementById(section).classList.toggle('hidden', section !== id);
+      });
+    }
+
+    function beginCleaning() {
+      show('cleaning');
+      phase.textContent = 'Cleaning';
+      message.textContent = 'Remove all traces of rust and fouling from the musket.';
+
+      const area = document.getElementById('cleaning-area');
+      let remaining = 8;
+
+      for (let i = 0; i < remaining; i++) {
+        const rust = document.createElement('div');
+        rust.className = 'rust';
+        rust.setAttribute('aria-label', 'Rust spot');
+        rust.style.left = `${5 + Math.random() * 80}%`;
+        rust.style.top = `${10 + Math.random() * 65}%`;
+        rust.addEventListener('click', () => {
+          rust.remove();
+          remaining--;
+          if (remaining === 0) beginInspection();
+        });
+        area.appendChild(rust);
+      }
+    }
+
+    function beginInspection() {
+      show('inspection');
+      phase.textContent = 'Inspection';
+      message.textContent = 'Locate and identify all visible defects.';
+
+      const area = document.getElementById('inspection-area');
+      const defectCount = 4;
+      for (let i = 0; i < defectCount; i++) {
+        const defect = document.createElement('div');
+        defect.className = 'defect';
+        defect.setAttribute('aria-label', 'Unidentified defect');
+        defect.style.left = `${10 + Math.random() * 75}%`;
+        defect.style.top = `${15 + Math.random() * 55}%`;
+        defect.addEventListener('click', () => {
+          if (defect.classList.contains('found')) return;
+          defect.classList.add('found');
+          defect.setAttribute('aria-label', 'Identified defect');
+          foundDefects++;
+          if (foundDefects === defectCount) beginAssembly();
+        });
+        area.appendChild(defect);
+      }
+    }
+
+    function beginAssembly() {
+      show('assembly');
+      phase.textContent = 'Reassembly';
+      message.textContent = 'Return each component to its proper location.';
+
+      const tray = document.getElementById('assembly-tray');
+      Object.entries(partNames).forEach(([part, name]) => {
+        const card = document.createElement('div');
+        card.className = 'assembly-card';
+        card.dataset.part = part;
+        card.textContent = name;
+
+        makeDraggable(card, (item, x, y) => {
+          const target = [...document.querySelectorAll('.drop-target:not(.placed)')].find(candidate => {
+            const rect = candidate.getBoundingClientRect();
+            return candidate.dataset.part === item.dataset.part &&
+              x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+          });
+
+          if (!target) return false;
+          target.classList.add('placed');
+          item.remove();
+          assembledParts++;
+          if (assembledParts === Object.keys(partNames).length) finish();
+          return true;
+        });
+
+        tray.appendChild(card);
+      });
+    }
+
+    function finish() {
+      show('complete');
+      phase.textContent = 'Ready for Service';
+      message.textContent = 'The Springfield Model 1861 has passed inspection.';
+    }
+  </script>
 </body>
 </html>
+
